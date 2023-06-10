@@ -31,14 +31,20 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    
+    const appointmentOptions = client.db("Doctors-Appointment").collection("appointmentOptions");
+
+    app.get('/appointmentOptions', async(req,res)=>{
+        const querry = {};
+        const options = await appointmentOptions.find(querry).toArray();
+        res.send(options)
+    })
     
   } finally {
     
     
   }
 }
-run().catch(console.dir);
+run().catch(console.log());
 
 
 app.listen(port, ()=>{

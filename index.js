@@ -93,5 +93,5 @@ async function run() {
 run().catch(console.log());
 
 app.listen(port, () => {
-  console.log("app listening");
+  console.log("app is listening");
 });

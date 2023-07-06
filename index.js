@@ -36,6 +36,9 @@ async function run() {
     const bookingCollections = client
       .db("Doctors-Appointment")
       .collection("bookingCollections");
+    const usersCollections = client
+      .db("Doctors-Appointment")
+      .collection("usersCollections");
 
     app.get("/appointmentOptions", async (req, res) => {
       // console.log(date);
@@ -93,8 +96,14 @@ async function run() {
       const query = {email : email};
       const bookings = await bookingCollections.find(query).toArray();
       res.send(bookings)
-    })
-    // 
+    });
+
+    // saving user to the database
+    app.post('/users', async(req,res)=>{
+      const user = req.body;
+      const result = await usersCollections.insertOne(user);
+      res.send(result)
+    }) 
   } finally {
   }
 }

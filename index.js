@@ -61,7 +61,6 @@ async function run() {
         option.slots = remainingSlots;
       });
 
-      // console.log(alreadyBooked);
       res.send(options);
     });
 
@@ -69,7 +68,6 @@ async function run() {
 
     app.post("/bookings", async (req, res) => {
       const bookings = req.body;
-      // console.log(bookings);
       const query = {
         treatmentDate : bookings.treatmentDate,
         email : bookings.email,
@@ -87,6 +85,16 @@ async function run() {
      
       res.send(result);
     });
+
+    // getting appoint via email query
+
+    app.get("/bookings", async(req, res)=>{
+      const email = req.query.email;
+      const query = {email : email};
+      const bookings = await bookingCollections.find(query).toArray();
+      res.send(bookings)
+    })
+    // 
   } finally {
   }
 }

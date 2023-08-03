@@ -99,6 +99,19 @@ async function run() {
       res.send(bookings)
     });
 
+    // jwt auth
+
+    app.get('/jwt', async(req, res)=>{
+      const email = req.query.email;
+      const query = {email : email};
+      const user = await usersCollections.findOne(query);
+      if(user){
+        const token = jwt.sign({email}, process.env.ACCESS_TOKEN, {expiresIn: '1h'});
+        return res.send({accessToken: token})
+      };
+      res.status(403).send({accessToken : ''})
+    })
+
     // saving user to the database
     app.post('/users', async(req,res)=>{
       const user = req.body;

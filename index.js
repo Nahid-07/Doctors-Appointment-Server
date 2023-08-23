@@ -28,6 +28,16 @@ const client = new MongoClient(uri, {
   },
 });
 
+const verifyJwt =(req,res,next)=>{
+  let authHeaders = req.headers.authorization;
+  if(!authHeaders){
+    return res.send(401).send("unauthorized access")
+  }
+  let token = authHeaders.split(' ')[1];
+  console.log(token);
+  next()
+}
+
 async function run() {
   try {
     const appointmentOptions = client
@@ -92,7 +102,7 @@ async function run() {
 
     // getting appoint via email query
 
-    app.get("/bookings", async(req, res)=>{
+    app.get("/bookings",verifyJwt, async(req, res)=>{
       const email = req.query.email;
       const query = {email : email};
       const bookings = await bookingCollections.find(query).toArray();

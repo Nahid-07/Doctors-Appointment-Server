@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const jwt = require('jsonwebtoken');
 
 require("dotenv").config();
 
@@ -27,16 +26,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
-const verifyJwt =(req,res,next)=>{
-  let authHeaders = req.headers.authorization;
-  if(!authHeaders){
-    return res.send(401).send("unauthorized access")
-  }
-  let token = authHeaders.split(' ')[1];
-  console.log(token);
-  next()
-}
 
 async function run() {
   try {
@@ -102,25 +91,13 @@ async function run() {
 
     // getting appoint via email query
 
-    app.get("/bookings",verifyJwt, async(req, res)=>{
+    app.get("/bookings", async(req, res)=>{
       const email = req.query.email;
       const query = {email : email};
+      
       const bookings = await bookingCollections.find(query).toArray();
       res.send(bookings)
     });
-
-    // jwt auth
-
-    app.get('/jwt', async(req, res)=>{
-      const email = req.query.email;
-      const query = {email : email};
-      const user = await usersCollections.findOne(query);
-      if(user){
-        const token = jwt.sign({email}, process.env.ACCESS_TOKEN, {expiresIn: '1h'});
-        return res.send({accessToken: token})
-      };
-      res.status(403).send({accessToken : ''})
-    })
 
     // saving user to the database
     app.post('/users', async(req,res)=>{

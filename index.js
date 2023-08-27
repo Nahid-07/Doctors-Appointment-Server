@@ -114,6 +114,12 @@ async function run() {
 
     app.put('/users/:id', async(req, res)=>{
       const id = req.params.id;
+      const email = req.body.email;
+      const query = {email : email};
+      const user = await usersCollections.findOne(query);
+      if(user?.role !== "admin"){
+        return res.status(403).send({message:"forbidden access"})
+      }
       const filter = {_id : new ObjectId(id)};
       const options = {upsert : true}
       const updatedDoc = {

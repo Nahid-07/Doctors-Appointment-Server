@@ -5,7 +5,7 @@ const port = process.env.PORT || 5000;
 require("dotenv").config();
 
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // middleware
 
@@ -110,6 +110,19 @@ async function run() {
       const querry = {};
       const allUsers = await usersCollections.find(querry).toArray();
       res.send(allUsers)
+    });
+
+    app.put('/users/:id', async(req, res)=>{
+      const id = req.params.id;
+      const filter = {_id : new ObjectId(id)};
+      const options = {upsert : true}
+      const updatedDoc = {
+        $set : {
+          "role" : "admin"
+        }
+      }
+      const result = await usersCollections.updateOne(filter,updatedDoc,options);
+      res.send(result)
     })
   } finally {
   }

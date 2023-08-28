@@ -112,6 +112,8 @@ async function run() {
       res.send(allUsers)
     });
 
+    // admin role api
+
     app.put('/users/:id', async(req, res)=>{
       const id = req.params.id;
       const email = req.body.email;

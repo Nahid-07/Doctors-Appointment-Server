@@ -67,6 +67,14 @@ async function run() {
       res.send(options);
     });
 
+    // getting appointment name via project query
+
+    app.get("/appointmentSpecialty", async(req, res)=>{
+      const query = {}
+      const result = await appointmentOptions.find(query).project({name:1}).toArray();
+      res.send(result)
+    })
+
     // post booking data api
 
     app.post("/bookings", async (req, res) => {

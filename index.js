@@ -32,6 +32,9 @@ async function run() {
     const appointmentOptions = client
       .db("Doctors-Appointment")
       .collection("appointmentOptions");
+    const doctorCollections = client
+      .db("Doctors-Appointment")
+      .collection("doctorCollections");
     // booking collenctions
     const bookingCollections = client
       .db("Doctors-Appointment")
@@ -147,6 +150,12 @@ async function run() {
         }
       }
       const result = await usersCollections.updateOne(filter,updatedDoc,options);
+      res.send(result)
+    })
+    // doctor data post api
+    app.post("/doctorCollection", async(req,res)=>{
+      const doctorData = req.body;
+      const result = await doctorCollections.insertOne(doctorData);
       res.send(result)
     })
   } finally {

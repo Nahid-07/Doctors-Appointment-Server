@@ -158,6 +158,12 @@ async function run() {
       const result = await doctorCollections.insertOne(doctorData);
       res.send(result)
     })
+
+    app.get('/doctors', async(req,res)=>{
+      const query = {};
+      const result = await doctorCollections.find(query).toArray();
+      res.send(result)
+    })
   } finally {
   }
 }

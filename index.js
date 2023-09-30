@@ -72,98 +72,118 @@ async function run() {
 
     // getting appointment name via project query
 
-    app.get("/appointmentSpecialty", async(req, res)=>{
-      const query = {}
-      const result = await appointmentOptions.find(query).project({name:1}).toArray();
-      res.send(result)
-    })
+    app.get("/appointmentSpecialty", async (req, res) => {
+      const query = {};
+      const result = await appointmentOptions
+        .find(query)
+        .project({ name: 1 })
+        .toArray();
+      res.send(result);
+    });
 
     // post booking data api
 
     app.post("/bookings", async (req, res) => {
       const bookings = req.body;
       const query = {
-        treatmentDate : bookings.treatmentDate,
-        email : bookings.email,
-        treatmentName : bookings.treatmentName
+        treatmentDate: bookings.treatmentDate,
+        email: bookings.email,
+        treatmentName: bookings.treatmentName,
+      };
+
+      const oneClientBookingData = await bookingCollections
+        .find(query)
+        .toArray();
+      console.log(oneClientBookingData);
+      if (oneClientBookingData.length) {
+        const message = `Sorry, You already have booking on ${bookings.treatmentDate}`;
+        return res.send({ acknowledged: false, message });
       }
 
-      const oneClientBookingData = await bookingCollections.find(query).toArray();
-      console.log(oneClientBookingData);
-      if(oneClientBookingData.length){
-        const message = `Sorry, You already have booking on ${bookings.treatmentDate}`;
-        return res.send({acknowledged : false, message})
-      }
-      
       const result = await bookingCollections.insertOne(bookings);
-     
+
       res.send(result);
     });
 
     // getting appoint via email query
 
-    app.get("/bookings", async(req, res)=>{
+    app.get("/bookings", async (req, res) => {
       const email = req.query.email;
-      const query = {email : email};
-      
+      const query = { email: email };
+
       const bookings = await bookingCollections.find(query).toArray();
-      res.send(bookings)
+      res.send(bookings);
     });
 
     // saving user to the database
-    app.post('/users', async(req,res)=>{
+    app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollections.insertOne(user);
-      res.send(result)
-    })
+      res.send(result);
+    });
 
-    app.get('/allUsers', async(req, res)=>{
+    app.get("/allUsers", async (req, res) => {
       const querry = {};
       const allUsers = await usersCollections.find(querry).toArray();
-      res.send(allUsers)
+      res.send(allUsers);
     });
 
     // admin api get
 
-    app.get("/users/admin/:email", async(req, res)=>{
+    app.get("/users/admin/:email", async (req, res) => {
       const email = req.params.email;
-      const query = {email : email};
+      const query = { email: email };
       const user = await usersCollections.findOne(query);
-      res.send({isAdmin : user?.role})
-    })
+      res.send({ isAdmin: user?.role });
+    });
 
     // admin role api
 
-    app.put('/users/admin/:id', async(req, res)=>{
+    app.put("/users/admin/:id", async (req, res) => {
       const id = req.params.id;
       const email = req.body.email;
-      const query = {email : email};
+      const query = { email: email };
       const user = await usersCollections.findOne(query);
-      if(user?.role !== "admin"){
-        return res.status(403).send({message:"forbidden access"})
+      if (user?.role !== "admin") {
+        return res.status(403).send({ message: "forbidden access" });
       }
-      const filter = {_id : new ObjectId(id)};
-      const options = {upsert : true}
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
       const updatedDoc = {
-        $set : {
-          "role" : "admin"
-        }
-      }
-      const result = await usersCollections.updateOne(filter,updatedDoc,options);
-      res.send(result)
-    })
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await usersCollections.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
     // doctor data post api
-    app.post("/doctorCollection", async(req,res)=>{
+    app.post("/doctorCollection", async (req, res) => {
       const doctorData = req.body;
       const result = await doctorCollections.insertOne(doctorData);
-      res.send(result)
-    })
+      res.send(result);
+    });
 
-    app.get('/doctors', async(req,res)=>{
+    // doctor list get
+    app.get("/doctors", async (req, res) => {
       const query = {};
       const result = await doctorCollections.find(query).toArray();
-      res.send(result)
-    })
+      res.send(result);
+    });
+
+    // doctor delete
+    app.delete("/doctor/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const query = { _id: id };
+      console.log(query);
+      const result = await doctorCollections.deleteOne(query);
+      res.send(result);
+    });
   } finally {
   }
 }

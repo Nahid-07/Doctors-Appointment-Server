@@ -176,14 +176,12 @@ async function run() {
     });
 
     // doctor delete
-    app.delete("/doctor/:id", async (req, res) => {
+    app.delete('/doctordelete/:id', async(req,res)=>{
       const id = req.params.id;
-      console.log(id);
-      const query = { _id: id };
-      console.log(query);
+      const query = {_id : new ObjectId(id)};
       const result = await doctorCollections.deleteOne(query);
-      res.send(result);
-    });
+      res.send(result)
+    })
   } finally {
   }
 }

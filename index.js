@@ -182,6 +182,16 @@ async function run() {
       const result = await doctorCollections.deleteOne(query);
       res.send(result)
     })
+
+    // delete user
+    app.delete('/deleteuser/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)};
+      const deleteUser = await usersCollections.deleteOne(query);
+      res.send(deleteUser)
+    })
+
+
   } finally {
   }
 }
